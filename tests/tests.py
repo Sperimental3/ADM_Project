@@ -7,16 +7,16 @@ from utils import NN
 def main():
 
     FC = True
-    GRAY = True
+    GRAY = False
 
-    original = io.imread("original_2590_gray.png", as_gray=GRAY)
+    original = io.imread("original_4150_color.png", as_gray=GRAY)
     transform = ToTensor()
     original = transform(original).type(torch.float32)
     original = torch.unsqueeze(original, 0)
 
     print(original.shape, original.dtype, original)
 
-    adversarial = io.imread("adversarial_2590_gray.png", as_gray=GRAY)
+    adversarial = io.imread("adversarial_4150_color.png", as_gray=GRAY)
     adversarial = transform(adversarial).type(torch.float32)
     adversarial = torch.unsqueeze(adversarial, 0)
 

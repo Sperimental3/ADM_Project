@@ -272,9 +272,9 @@ def CNN_MILP(weights, biases, sample, sample_label):
     # add constraint on the fact that the misclassification has to happen
     # so if starting label is 1 (dog), try to output between 0 and 0.5 (cat), and vice versa
     if sample_label == 1:
-        m.addConstr(out <= 0.5)
+        m.addConstr(out <= -0.001)
     else:
-        m.addConstr(out >= 0.5001)
+        m.addConstr(out >= 0.001)
 
     # one can add constraints on some limitations on pixel distances
     # m.addConstr(...)

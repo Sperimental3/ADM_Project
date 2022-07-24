@@ -34,7 +34,7 @@ def FC_MILP(weights, biases, sample, sample_label, gray):
     z = m.addVars(2, 32, name="z", vtype=GRB.BINARY)
 
     # the final variable has not s and z associated because a relu is not applied at the end of the network
-    out = m.addVar(name="x_K", lb=-100, ub=100, vtype=GRB.CONTINUOUS)
+    out = m.addVar(name="out", lb=-100, ub=100, vtype=GRB.CONTINUOUS)
 
     # add another set of variable for the distance between the sample and x_0
     d = m.addVars(input, name="d", vtype=GRB.CONTINUOUS)
@@ -70,9 +70,12 @@ def FC_MILP(weights, biases, sample, sample_label, gray):
     # add constraint on the fact that the misclassification has to happen,
     # so if starting label is 1 (dog), try to output between 0 and 0.5 (cat), and vice versa
     if sample_label == 1:
-        m.addConstr(out <= 0.5)
+        m.addConstr(out <= -0.001)
+    elif sample_label == 0:
+        m.addConstr(out >= 0.001)
     else:
-        m.addConstr(out >= 0.5001)
+        print("Something wrong with the label")
+        return -1
 
     print("Starting the optimization...")
 

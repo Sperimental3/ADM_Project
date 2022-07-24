@@ -26,11 +26,11 @@ def main():
                                   gray=GRAY
                                   )
 
-    number = 801
+    number = 3809
     # here I've put number - 1 because even if the images start from 1,
     # the dataset and the dataloader start to count from 0
     sample = test_dataset[number - 1]
-    sample_label = 0
+    sample_label = 1
 
     # print(sample.shape)
 
