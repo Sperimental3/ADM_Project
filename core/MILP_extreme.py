@@ -1,3 +1,6 @@
+# this file contains the function to model the CNN, it returns the adversarial instance generated
+# that wants to fool the network
+
 import torch
 import gurobipy as gp
 from gurobipy import GRB
@@ -163,14 +166,14 @@ def CNN_MILP(weights, biases, sample, sample_label):
                                         x_pool_1[k, (i // 2) + 1, (j // 2) + 1] <= x_1[1, k, i + 1, j + 1])
                 m.addConstr(x_pool_1[k, (i // 2) + 1, (j // 2) + 1] >= x_1[1, k, i + 1, j + 1])
 
-    print("Debug")
+    # print("Debug")
 
     for k in range(32):
         for i in range(0, 100, 2):
             for j in range(0, 100, 2):
                 m.addConstr(gp.quicksum(z_pool_1[k, i + 1 + x, j + 1 + y] for x in range(2) for y in range(2)) == 1)
 
-    print("Debug")
+    # print("Debug")
 
     # _____________end of the first two layers plus max pooling_____________
 

@@ -1,5 +1,6 @@
 # for the training of the two different types of networks
 
+import os
 from utils.dataset import CatsVsDogs, Rescale, ToTensor, EncodeLabel
 from utils import NN
 import torch
@@ -63,8 +64,12 @@ def main():
 
     GRAY = True
 
-    full_dataset = CatsVsDogs(root_dir="C:\\Users\\Matteo\\Desktop\\Automated Decision "
-                                       "Making\\Progetto\\dogs-vs-cats\\train\\train",
+    if os.name == "nt":
+        inPath = "C:\\Users\\Matteo\\Desktop\\Automated Decision Making\\Progetto\\dogs-vs-cats\\train\\train"
+    else:
+        inPath = "/home/sperimental3/Scrivania/Automated Decision Making/Progetto/dogs-vs-cats/train/train"
+
+    full_dataset = CatsVsDogs(root_dir=inPath,
                               transform=transforms.Compose([Rescale((100, 100)), ToTensor()]),
                               target_transform=EncodeLabel(),
                               gray=GRAY)

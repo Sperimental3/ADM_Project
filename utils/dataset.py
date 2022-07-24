@@ -42,7 +42,10 @@ class CatsVsDogs(Dataset):
         else:
             image = io.imread(img_name)
 
-        label = img_name.split("\\")[-1].split(".")[0]
+        if os.name == "nt":
+            label = img_name.split("\\")[-1].split(".")[0]
+        else:
+            label = img_name.split("/")[-1].split(".")[0]
 
         sample = {"image": image, "label": label}
 

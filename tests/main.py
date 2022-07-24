@@ -3,6 +3,7 @@ from torchvision import transforms, utils
 import matplotlib.pyplot as plt
 import torch
 from core import MILP, MILP_extreme
+import os
 
 
 def main():
@@ -15,29 +16,35 @@ def main():
     else:
         label = "color"
 
-    test_dataset = CatsVsDogsTest(root_dir="C:\\Users\\Matteo\\Desktop\\Automated Decision "
-                                           "Making\\Progetto\\dogs-vs-cats\\test1\\test1",
+    if os.name == "nt":
+        inPath = "C:\\Users\\Matteo\\Desktop\\Automated Decision Making\\Progetto\\dogs-vs-cats\\test1\\test1"
+    else:
+        inPath = "/home/sperimental3/Scrivania/Automated Decision Making/Progetto/dogs-vs-cats/test1/test1"
+
+    test_dataset = CatsVsDogsTest(root_dir=inPath,
                                   transform=transforms.Compose([Rescale((100, 100)), ToTensor()]),
                                   gray=GRAY
                                   )
 
-    number = 746
+    number = 801
     # here I've put number - 1 because even if the images start from 1,
     # the dataset and the dataloader start to count from 0
     sample = test_dataset[number - 1]
-    sample_label = 1
+    sample_label = 0
 
     # print(sample.shape)
 
     # plt.imshow(sample.numpy().transpose((1, 2, 0)), cmap="gray")
     # plt.show()
 
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
     # read weights and biases from file
     if FC:
         if GRAY:
-            model = torch.load("FC_gray_weights.pth")
+            model = torch.load("FC_gray_weights.pth", map_location=device)
         else:
-            model = torch.load("FC_color_weights.pth")
+            model = torch.load("FC_color_weights.pth", map_location=device)
 
         weights = {0: model["net.1.weight"],
                    1: model["net.3.weight"],
@@ -51,7 +58,7 @@ def main():
         # print(weights[0][2][45])
     else:
         # read weights and biases from file
-        model = torch.load("CNN_gray_weights.pth")
+        model = torch.load("CNN_gray_weights.pth", map_location=device)
 
         weights = {0: model["net.0.weight"],
                    1: model["net.2.weight"],

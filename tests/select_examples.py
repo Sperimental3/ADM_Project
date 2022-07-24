@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
 from utils import NN
 import random
+import os
 
 
 def main():
@@ -13,14 +14,18 @@ def main():
     # For what concern the colorized version of the images the MILP of the CNN is already huge in grayscale,
     # so I think it doesn't make sense from a conceptual point, especially considering that the accuracy
     # in the prediction doesn't change so much given the color,
-    # and because the modifications would be almost zero (only the change in the input channel) but the number of
-    # variables x_0 would be tripled.
+    # and because the modifications to the model would be almost zero (only the change in the input channel)
+    # but the number of variables x_0 would be tripled.
 
     FC = True
     GRAY = True
 
-    test_dataset = CatsVsDogsTest(root_dir="C:\\Users\\Matteo\\Desktop\\Automated Decision "
-                                           "Making\\Progetto\\dogs-vs-cats\\test1\\test1",
+    if os.name == "nt":
+        inPath = "C:\\Users\\Matteo\\Desktop\\Automated Decision Making\\Progetto\\dogs-vs-cats\\test1\\test1"
+    else:
+        inPath = "/home/sperimental3/Scrivania/Automated Decision Making/Progetto/dogs-vs-cats/test1/test1"
+
+    test_dataset = CatsVsDogsTest(root_dir=inPath,
                                   transform=transforms.Compose([Rescale((100, 100)), ToTensor()]),
                                   gray=GRAY
                                   )
@@ -28,27 +33,29 @@ def main():
     dataloader = DataLoader(test_dataset, batch_size=10,
                             shuffle=False, num_workers=0)
 
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
     if FC:
         if GRAY:
             # define net
             net = NN.Weak(1 * 100 * 100, 1)
 
             # load weights and biases of the previously trained net
-            net.load_state_dict(torch.load("FC_gray_weights.pth"))
+            net.load_state_dict(torch.load("FC_gray_weights.pth", map_location=device))
             net = net.eval()
         else:
             # define net
             net = NN.Weak(3 * 100 * 100, 1)
 
             # load weights and biases of the previously trained net
-            net.load_state_dict(torch.load("FC_color_weights.pth"))
+            net.load_state_dict(torch.load("FC_color_weights.pth", map_location=device))
             net = net.eval()
     else:
         # define net
         net = NN.Strong(1, 1)
 
         # load weights and biases of the previously trained net
-        net.load_state_dict(torch.load("CNN_gray_weights.pth"))
+        net.load_state_dict(torch.load("CNN_gray_weights.pth", map_location=device))
         net = net.eval()
 
     # now let's take some examples and make the network trained classify them, after this we will feed with a real
@@ -111,6 +118,7 @@ Here I will note some good examples of classification:
         "3496.jpg": 0, pred: 0.2180
         "1179.jpg": 1, pred: 0.8543
         "3016.jpg": 1, pred: 0.8627
+        "2306.jpg": 1, pred: 0.9259
     CNN_gray:
         "2609.jpg": 1, pred: 0.9962
         "615.jpg": 0, pred: 0.0084

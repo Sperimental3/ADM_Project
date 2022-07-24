@@ -7,8 +7,10 @@ import cv2
 # import torch
 # import matplotlib.pyplot as plt
 
-
-inPath = "C:\\Users\\Matteo\\Desktop\\Automated Decision Making\\Progetto\\dogs-vs-cats\\train\\train"
+if os.name == "nt":
+    inPath = "C:\\Users\\Matteo\\Desktop\\Automated Decision Making\\Progetto\\dogs-vs-cats\\train\\train"
+else:
+    inPath = "/home/sperimental3/Scrivania/Automated Decision Making/Progetto/dogs-vs-cats/train/train"
 
 dataset_length = len(os.listdir(inPath))
 print(dataset_length)
@@ -23,7 +25,7 @@ dimensions = np.empty((len(os.listdir(inPath)), 3))
 
 for imagePath, i in zip(dataset_list, range(dataset_length)):
     try:
-        ex = cv2.imread(f"{inPath}\\{imagePath}")
+        ex = cv2.imread(os.path.join(inPath, imagePath))
         dimensions[i] = ex.shape
     except Exception as inst:
         print(type(inst))
